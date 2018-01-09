@@ -6,6 +6,8 @@
 // @author       Kael Lu
 // @include		 http*://*.world-of-dungeons.*/wod/spiel/tournament/*duell.php*
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js
+// @updateURL		  https://github.com/kaellu/wod/blob/master/acceptduel.user.js
+// @downloadURL		https://github.com/kaellu/wod/blob/master/acceptduel.user.js
 // @grant        none
 // ==/UserScript==
 
