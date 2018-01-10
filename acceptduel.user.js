@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Accept Duel
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  Auto accept ALL duels so that you won't click them one by one!
 // @author       Kael Lu
 // @include		 http*://*.world-of-dungeons.*/wod/spiel/tournament/*duell.php*
@@ -86,7 +86,7 @@
         var duellist = document.getElementsByTagName("input");
         for (var i = 0; i < duellist.length; i++) {
             var duelButton = duellist[i];
-            if(duelButton.getAttribute("type") == "submit" && duelButton.getAttribute("class") == "button clickable" && duelButton.getAttribute("value") == "开始"){
+            if(duelButton.getAttribute("type") == "submit" && duelButton.getAttribute("class") == "button clickable" && (duelButton.getAttribute("value") == "开始"||duelButton.getAttribute("value") == "接受")){
                 //console.log(duelButton.getAttribute("name")+"开始！");
                 //var posStart = duelButton.getAttribute("name").indexOf("[");
                 //var posEnd = duelButton.getAttribute("name").indexOf("]");
