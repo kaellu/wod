@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Accept Duel
 // @namespace    http://tampermonkey.net/
-// @version      0.2
-// @description  Auto accept ALL duels so that you won't click them one by one!
+// @version      0.3
+// @description  Auto accept or reject ALL duels so that you won't click them one by one!
 // @author       Kael Lu
 // @include		 http*://*.world-of-dungeons.*/wod/spiel/tournament/*duell.php*
 // @require      https://github.com/kaellu/wod/raw/master/jquery-3.2.1.min.js
@@ -78,37 +78,61 @@
         XmlHttp.send(null);
     }
 
-    function acceptDuel(){
-        //if(!prepareDone) return;
+    function clickAcceptDuel(){
+        console.log("clickAcceptDuel start!");
+        localStorage.duelFlag = 1;
+        dealDuel();
+        console.log("clickAcceptDuel done!");
+    }
+
+    function dealDuel(){
+        console.log("dealDuel start!");
+
+        if(localStorage.duelFlag==null) return ;
 
         //$("form[name='the_form']").attr('target', '_blank');
-        var j = 5;
         var duellist = document.getElementsByTagName("input");
-        for (var i = 0; i < duellist.length; i++) {
-            var duelButton = duellist[i];
-            if(duelButton.getAttribute("type") == "submit" && duelButton.getAttribute("class") == "button clickable" && (duelButton.getAttribute("value") == "开始"||duelButton.getAttribute("value") == "接受")){
-                //console.log(duelButton.getAttribute("name")+"开始！");
-                //var posStart = duelButton.getAttribute("name").indexOf("[");
-                //var posEnd = duelButton.getAttribute("name").indexOf("]");
-                //var duelID = duelButton.getAttribute("name").substring(posStart+1,posEnd);
-                //var duelURL = document.location.href +"&DuellId="+duelID;
+        var j = 0 ;
+        var i;
+        var duelButton;
 
-                setTimeout(duelButton.click(),1000);
+        if(localStorage.duelFlag==0){
+            for (i = 0; i < duellist.length; i++) {
+                duelButton = duellist[i];
+                if(duelButton.getAttribute("type") == "submit" && (duelButton.getAttribute("name").indexOf("reject[")>-1) ){
+                    console.log(duelButton.getAttribute("name")+"is found！");
+                    setTimeout(duelButton.click(),1000);
+                    j = j+1;
+                }
+            }
+        }else if (localStorage.duelFlag==1){
+            for (i = 0; i < duellist.length; i++) {
+                duelButton = duellist[i];
+                if(duelButton.getAttribute("type") == "submit" && (duelButton.getAttribute("name").indexOf("accept[")>-1) ){
+                    console.log(duelButton.getAttribute("name")+"is found！");
+                    setTimeout(duelButton.click(),1000);
+                    j = j+1;
+                }
             }
         }
 
-        console.log("done!");
+        if(j==0){
+            localStorage.duelFlag = null;
+            console.log("no duel found, stopped");
+            return;
+        }
+
+        console.log("dealDuel done!");
+    }
+
+    function clickRejectDuel(){
+        console.log("clickRejectDuel start!");
+        localStorage.duelFlag = 0;
+        dealDuel();
+        console.log("clickRejectDuel done!");
     }
 
 
-
-
-    function rejectDuel(){
-        if(!prepareDone) return;
-
-        //alert("action:reject");
-
-    }
 
     var rContents = {
         Text_Button_AcceptAll: ["Accept All",
@@ -122,6 +146,9 @@
     var gIndexTemplateDiv;
     var gResponseDiv;
     var prepareDone = false;
+    var continueFlag;
+    var acceptOrReject;
+    var duelFlag;
 
     try {
         var rLocal = GetLocalContents(rContents);
@@ -130,21 +157,21 @@
         var allButton = document.getElementsByTagName("input");
         var i = 0;
         var h1;
-        var continueFlag = false;
+
+        console.log("duelFlag="+localStorage.duelFlag);
+
         if (allH1 === 'undefined') return;
         if (allButton === 'undefined') return;
-        /*for (i = 0; i < allH1.length; ++i) {
+        for (i = 0; i < allH1.length; ++i) {
             h1 = allH1[i];
             if (h1.innerHTML == "您的决斗") {
-                //alert("duel list page!");
-                InsertButton(h1, rLocal.Text_Button_AcceptAll, acceptDuel);
-                InsertButton(h1, rLocal.Text_Button_DenyAll, rejectDuel);
-                continueFlag = true;
+                InsertButton(h1, rLocal.Text_Button_AcceptAll, clickAcceptDuel);
+                InsertButton(h1, rLocal.Text_Button_DenyAll, clickRejectDuel);
                 break;
             }
         }
-*/
-        acceptDuel();
+
+        if(localStorage.duelFlag!=null) dealDuel();
 
         //if(!continueFlag) return;
         //prepareDone = true;
