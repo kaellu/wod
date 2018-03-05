@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Accept Duel
 // @namespace    http://tampermonkey.net/
-// @version      0.3
+// @version      0.4
 // @description  Auto accept or reject ALL duels so that you won't click them one by one!
 // @author       Kael Lu
 // @include		 http*://*.world-of-dungeons.*/wod/spiel/tournament/*duell.php*
@@ -101,7 +101,7 @@
                 duelButton = duellist[i];
                 if(duelButton.getAttribute("type") == "submit" && (duelButton.getAttribute("name").indexOf("reject[")>-1) ){
                     console.log(duelButton.getAttribute("name")+"is found！");
-                    setTimeout(duelButton.click(),1000);
+                    setTimeout(duelButton.click(),3000);
                     j = j+1;
                 }
             }
@@ -110,7 +110,7 @@
                 duelButton = duellist[i];
                 if(duelButton.getAttribute("type") == "submit" && (duelButton.getAttribute("name").indexOf("accept[")>-1) ){
                     console.log(duelButton.getAttribute("name")+"is found！");
-                    setTimeout(duelButton.click(),1000);
+                    setTimeout(duelButton.click(),3000);
                     j = j+1;
                 }
             }
@@ -131,6 +131,13 @@
         dealDuel();
         console.log("clickRejectDuel done!");
     }
+  
+    function clickStopRunning(){
+        console.log("clickStopRunning start!");
+        localStorage.duelFlag = null;
+        $("form[name='the_form']").submit();
+        console.log("clickStopRunning done!");
+    }
 
 
 
@@ -140,6 +147,9 @@
                                ],
         Text_Button_DenyAll: ["Deny All",
                               "全部拒绝"
+                             ],
+        Text_Button_StopRunning: ["Stop Running",
+                              "停止执行"
                              ]
 
     };
@@ -167,6 +177,7 @@
             if (h1.innerHTML == "您的决斗") {
                 InsertButton(h1, rLocal.Text_Button_AcceptAll, clickAcceptDuel);
                 InsertButton(h1, rLocal.Text_Button_DenyAll, clickRejectDuel);
+                InsertButton(h1, rLocal.Text_Button_StopRunning, clickStopRunning);
                 break;
             }
         }
